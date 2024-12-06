@@ -9,6 +9,19 @@ export default {
   ],
   theme: {
   	extend: {
+			keyframes: {
+        'pulse-border': {
+          '0%, 100%': { 
+            boxShadow: '0 0 0 0 rgba(139, 92, 246, 0.5)' 
+          },
+          '50%': { 
+            boxShadow: '0 0 0 4px rgba(139, 92, 246, 0.25)' 
+          },
+        }
+      },
+      animation: {
+        'pulse-border': 'pulse-border 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+      },
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',

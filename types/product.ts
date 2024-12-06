@@ -1,10 +1,9 @@
 export interface Product {
-  id: number;
+  id: string;
   name: string;
   description: string | null;
   price: number;
   imageURL: string | null;
-  createdAt: Date;
 }
 
 export interface ProductsResponse {

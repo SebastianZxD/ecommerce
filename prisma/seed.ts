@@ -1,5 +1,6 @@
 // seed.ts
 import { PrismaClient } from '@prisma/client';
+import { createId } from '@paralleldrive/cuid2';
 import { cosmeticsData } from './products';
 
 const prisma = new PrismaClient();
@@ -7,11 +8,16 @@ const prisma = new PrismaClient();
 async function main() {
   try {
     // Clear existing products
-    // Seed new products
+    await prisma.product.deleteMany();
+
+    // Seed new products with generated IDs
     const products = await Promise.all(
       cosmeticsData.map((product) => 
         prisma.product.create({
-          data: product
+          data: {
+            ...product,
+            id: createId()
+          }
         })
       )
     );

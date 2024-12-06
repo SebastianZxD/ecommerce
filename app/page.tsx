@@ -1,4 +1,4 @@
-import { ProductContainer } from "@/components/ProductContainer";
+import { ProductsContainer } from "@/components/ProductsContainer";
 
 const Home = () => {
   return (
@@ -6,7 +6,7 @@ const Home = () => {
       <section className="products-section">
         <h1 className="text-2xl font-bold mb-4">Our Products</h1>
         <div className="products-container">
-          <ProductContainer />
+          <ProductsContainer />
         </div>
       </section>
     </main>
