@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { MinusIcon, PlusIcon, ShoppingCart, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ProductThumbnailSkeleton } from "@/components/ProductThumnailSkeleton";
+import { useCreateCart } from "@/features/cart/api/use-create-cart";
 
 
 const quantitySchema = z.number()
@@ -33,6 +34,17 @@ type Props = {
   isLoading: boolean;
 }
 
+type Product = {
+  quantity: number;
+  id: string;
+  name: string;
+  description: string | null;
+  price: number;
+  imageURL: string | null;
+  createdAt: string;
+  isNew?: boolean;
+}
+
 const ProductSheet = ({product, open, onOpenChange, isLoading} :Props)  => {
 
   const [quantity, setQuantity] = useState<number>(1);
@@ -48,7 +60,15 @@ const ProductSheet = ({product, open, onOpenChange, isLoading} :Props)  => {
       quantity,
     };
 
-    // Add your cart logic here
+    const mutation = useCreateCart();
+    const onSubmit = (product: Payload) => {
+      const { data }
+      mutation.mutate(payload, {
+        onSuccess: () => {
+          
+        }
+      });
+    }
     console.log('Adding to cart:', payload);
 
     toast({

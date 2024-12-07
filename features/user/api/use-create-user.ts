@@ -18,10 +18,6 @@ export const useCreateUser = () => {
         json,
       });
       const user = await response.json();
-
-      // Initialize a cart for the new user using the createCart function
-      await useCreateCart(user.id).mutateAsync();
-
       return user;
     },
     onSuccess: (user) => {

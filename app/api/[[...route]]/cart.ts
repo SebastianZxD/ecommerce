@@ -3,7 +3,7 @@ import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import db from "@/lib/prisma";
 import { createId } from "@paralleldrive/cuid2";
-import { createCartSchema } from "@/db/schema";
+import createCartW
 
 const app = new Hono()
 .get(
@@ -50,17 +50,22 @@ const app = new Hono()
 )
 .post(
   "/",
-  zValidator("json", createCartSchema),
+  zValidator("json", createCartWithItemsSchema),
   async (c) => {
     const values = c.req.valid("json");
 
     const cart = await db.cart.create({
       data: {
         userId: values.userId,
+        items: {
+          create: values.items,
+        },
+      },
+      include: {
+        items: true,
       },
     });
 
     return c.json({ cart });
   }
 );
-export default app;
