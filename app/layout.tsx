@@ -5,6 +5,7 @@ import "./globals.css";
 import { QueryProvider } from "@/providers/query-providers";
 import { SheetProvider } from "@/providers/sheet-provider";
 import { Toaster } from "@/components/ui/toaster"
+import Header from "@/components/Header";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -34,6 +35,7 @@ export default function RootLayout({
       >
         <QueryProvider>
           <SheetProvider />
+          <Header />
           {children}
           <Toaster />
         </QueryProvider>

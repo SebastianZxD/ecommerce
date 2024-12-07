@@ -1,16 +1,8 @@
-import { z } from "zod";
+'use client';
 
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
 import { useOpenProduct } from "../hooks/use-open-product";
 
 import { useGetProduct } from "../api/use-get-product";
-import { SheetSkeleton } from "./sheet-skeleton";
 import ProductSheet from "./product-sheet";
 
 // const formSchema = insertCategorySchema.pick({
@@ -26,7 +18,7 @@ export const ViewProductSheet = () => {
 
   const product = productQuery.data; 
 
-  if (productQuery.isLoading) return <SheetSkeleton />;
+  
 
   // const mutation = useCreateCategory();
   // const onSubmit = (values: FormValues) => {
@@ -38,6 +30,6 @@ export const ViewProductSheet = () => {
   // }
   
   return (
-    <ProductSheet open={isOpen} onOpenChange={onClose} product={product}/>
+    <ProductSheet open={isOpen} onOpenChange={onClose} product={product} isLoading={productQuery.isLoading}/>
   );
 };

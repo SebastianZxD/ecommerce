@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { useToast } from '@/hooks/use-toast';
 import { MinusIcon, PlusIcon, ShoppingCart, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ProductThumbnailSkeleton } from "@/components/ProductThumnailSkeleton";
+
 
 const quantitySchema = z.number()
   .min(1, "Quantity must be at least 1")
@@ -28,9 +30,10 @@ type Props = {
   } | null | undefined
   open: boolean
   onOpenChange: () => void
+  isLoading: boolean;
 }
 
-const ProductSheet = ({product, open, onOpenChange} :Props)  => {
+const ProductSheet = ({product, open, onOpenChange, isLoading} :Props)  => {
 
   const [quantity, setQuantity] = useState<number>(1);
   const [error, setError] = useState<string | null>(null);
@@ -87,16 +90,18 @@ const ProductSheet = ({product, open, onOpenChange} :Props)  => {
               {product?.description}
             </SheetDescription>
           </SheetHeader>
-          <ProductThumbnail 
-            name={product?.name} 
-            price={product?.price} 
-            discount={undefined} 
-            imageURL={product?.imageURL} 
-            isNew={product?.isNew}
-          />
-          <div className='flex justify-center items-center'>
-            <p className='p-4'>{product?.description}</p>
-          </div>
+          {isLoading ? (
+            <ProductThumbnailSkeleton />
+          ) : (
+            <ProductThumbnail 
+              name={product?.name} 
+              price={product?.price} 
+              discount={undefined} 
+              imageURL={product?.imageURL} 
+              isNew={product?.isNew}
+              description={product?.description}
+            />
+          )}
           <div className="flex items-center space-x-4 absolute bottom-0 right-0">
             <div className="flex items-center gap-2">
               <Button

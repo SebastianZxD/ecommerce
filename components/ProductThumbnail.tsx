@@ -21,19 +21,19 @@ type Props = {
   } | undefined
   isNew: Boolean | undefined
   imageURL: string | null | undefined
+  description: string | undefined | null
 }
 
 const ProductThumbnail = ({ 
   name, 
   price, 
   discount={percentage: 20}, 
-  isNew = true, 
-  imageURL 
+  isNew, 
+  imageURL,
+  description
 }:Props) => {
 
   const [imageError, setImageError] = useState(false);
-
-  const percentage = 20;
 
   const calculateDiscountedPrice = () => {
     if (!price || !discount) return price;
@@ -74,6 +74,9 @@ const ProductThumbnail = ({
                 onError={() => setImageError(true)}
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
+            </div>
+            <div className='flex justify-center items-center'>
+              <p className='p-4'>{description}</p>
             </div>
           </div>
         )}
