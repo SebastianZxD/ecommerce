@@ -2,6 +2,10 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator zod {
+  provider = "zod-prisma-types"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -18,13 +22,24 @@ model User {
   name          String?
   email         String?   @unique
   image         String?
+  verified      Boolean   
   role          UserRole  @default(USER)
   accounts      Account[]
   carts         Cart[]
   orders        Order[]
+  userDetails   UserDetail[]
   createdAt     DateTime  @default(now()) @map("created_at")
   updatedAt     DateTime  @updatedAt @map("updated_at")
 }
+
+model UserDetail {
+  id          String      @id @default(cuid())
+  address     String
+  phone       String
+  userId      String
+  user        User?       @relation(fields: [userId], references: [id])
+}
+
 
 model Account {
   id                 String  @id @default(cuid())
@@ -61,7 +76,7 @@ model Cart {
   createdAt   DateTime    @default(now()) @map("created_at")
   updatedAt   DateTime    @updatedAt @map("updated_at")
   items       CartItem[]
-  userId      String
+  userId      String?
   user        User?       @relation(fields: [userId], references: [id])
 }
 
@@ -72,6 +87,7 @@ model CartItem {
   productId   String
   cart        Cart        @relation(fields: [cartId], references: [id])
   cartId      String
+  price       Int
 }
 
 model Order {

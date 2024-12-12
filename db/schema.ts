@@ -6,7 +6,7 @@ export const userSchema = z.object({
   id: z.string().cuid(),
   name: z.string().optional(),
   email: z.string().email().optional(),
-  emailVerified: z.date().optional(),
+  verified: z.date().optional(),
   image: z.string().url().optional(),
   password: z.string().optional(),
   role: z.enum(["USER", "ADMIN"]).default("USER"),
@@ -35,30 +35,46 @@ export const productSchema = z.object({
   id: z.string().cuid(),
   name: z.string(),
   description: z.string().optional(),
-  price: z.number(),
+  price: z.number().int(), // Changed to ensure integer
   imageURL: z.string().url().optional(),
   createdAt: z.date().default(() => new Date()),
+  cartItems: z.array(z.object({ // Added relation
+    id: z.string().cuid()
+  })).optional(),
+  orderItems: z.array(z.object({ // Added relation
+    id: z.string().cuid()
+  })).optional(),
 });
+
 
 // CartItem schema
 export const cartItemSchema = z.object({
   id: z.string().cuid(),
-  quantity: z.number().positive(),
+  quantity: z.number().int().positive(),
+  price: z.number().int(), // Added missing field
   productId: z.string().cuid(),
   cartId: z.string().cuid(),
+  product: z.object({ // Added product relation
+    id: z.string().cuid()
+  }).optional(),
+  cart: z.object({ // Added cart relation
+    id: z.string().cuid()
+  }).optional(),
 }) satisfies z.Schema<Prisma.CartItemUncheckedCreateInput>;
 
 // Cart schema
 export const cartSchema = z.object({
   id: z.string().cuid().optional(),
-  createdAt: z.date().default(() => new Date()).optional(),
-  updatedAt: z.date().default(() => new Date()).optional(),
-  userId: z.string().cuid(),
-  items: z.object({
-    create: z.array(cartItemSchema).optional(),
-    connect: z.array(z.object({ id: z.string().cuid() })).optional(),
+  createdAt: z.date().default(() => new Date()),
+  updatedAt: z.date().default(() => new Date()),
+  userId: z.string().cuid().optional(),
+  user: z.object({ // Added user relation
+    id: z.string().cuid()
   }).optional(),
-}) satisfies z.Schema<Prisma.CartUncheckedCreateInput>;
+  items: z.array(z.object({ // Simplified items relation
+    id: z.string().cuid()
+  })).optional(),
+});
 
 // CreateCart schema
 export const createCartSchema = cartSchema.omit({ id: true, createdAt: true, updatedAt: true });

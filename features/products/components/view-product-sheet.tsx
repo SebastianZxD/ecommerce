@@ -1,5 +1,3 @@
-'use client';
-
 import { useOpenProduct } from "../hooks/use-open-product";
 
 import { useGetProduct } from "../api/use-get-product";
@@ -30,6 +28,6 @@ export const ViewProductSheet = () => {
   // }
   
   return (
-    <ProductSheet open={isOpen} onOpenChange={onClose} product={product} isLoading={productQuery.isLoading}/>
+    <ProductSheet open={isOpen} onOpenChange={onClose} product={product!} isLoading={productQuery.isLoading}/>
   );
 };

@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { SessionProvider } from "next-auth/react";
 
 import { QueryProvider } from "@/providers/query-providers";
 import { SheetProvider } from "@/providers/sheet-provider";
 import { Toaster } from "@/components/ui/toaster"
 import Header from "@/components/Header";
+import CartButton from "@/components/cart/CartButton";
+import { getCurrentUserId } from "@/features/user/hooks/get-current-user-id";
+import Cart from "@/features/cart/components/Cart";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -28,14 +32,19 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const userId = getCurrentUserId();
+
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <QueryProvider>
-          <SheetProvider />
-          <Header />
+          <SheetProvider /> 
+          <div className="flex w-full justify-between bg-purple-500 p-2 items-center">
+            <Header />
+            <Cart />
+          </div>
           {children}
           <Toaster />
         </QueryProvider>

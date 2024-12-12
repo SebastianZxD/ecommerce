@@ -12,28 +12,23 @@ import {
 } from "@/components/ui/card"
 import { useState } from "react";
 import { CloudAlertIcon, TagIcon } from "lucide-react";
+import { productSchema } from "@/db/schema";
+import { z } from "zod";
 
 type Props = {
-  name: string | undefined
-  price: Number | undefined
-  discount: {
-    percentage: Number
-  } | undefined
-  isNew: Boolean | undefined
-  imageURL: string | null | undefined
-  description: string | undefined | null
+  name: string | undefined;
+  price: number | undefined;
+  imageURL: string | undefined | null;
+  description: string | undefined | null;
 }
 
-const ProductThumbnail = ({ 
-  name, 
-  price, 
-  discount={percentage: 20}, 
-  isNew, 
-  imageURL,
-  description
-}:Props) => {
+
+const ProductThumbnail = ({name, price, imageURL, description}: Props) => {
+  
 
   const [imageError, setImageError] = useState(false);
+  const isNew = true;
+  const discount = {percentage: 20};
 
   const calculateDiscountedPrice = () => {
     if (!price || !discount) return price;
@@ -67,8 +62,8 @@ const ProductThumbnail = ({
           <div className="">
             <div className="relative w-[400px] h-[400px]">
               <Image
-                src={imageURL || '/placeholder.png'}
-                alt={name!}
+                src={imageURL || '/https://developers.google.com/static/maps/documentation/streetview/images/error-image-generic.png'}
+                alt={name || 'error fetching image'}
                 fill
                 className="object-cover rounded-md"
                 onError={() => setImageError(true)}
@@ -77,7 +72,7 @@ const ProductThumbnail = ({
             </div>
             <div className='flex justify-center items-center'>
               <p className='p-4'>{description}</p>
-            </div>
+            </div> 
           </div>
         )}
         </CardContent>

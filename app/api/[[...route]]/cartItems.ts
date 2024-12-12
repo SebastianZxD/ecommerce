@@ -2,25 +2,8 @@ import { z } from "zod";
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import db from "@/lib/prisma";
-import { CartCreateInputSchema, CartSchema } from "@/prisma/generated/zod";
 
 const app = new Hono()
-.get(
-  "/",
-  async (c) => {
-    const data = await db.cart.findFirst({
-      include: {
-        items: {
-          include: {
-            product: true,
-          },
-        },
-      },
-      cacheStrategy: { ttl: 60 },
-    });
-    return c.json({ data })
-  }
-)
 .get(
   "/:id",
   zValidator("param", z.object({
@@ -36,6 +19,13 @@ const app = new Hono()
     try {
       const data = await db.cart.findUnique({
         where: { id },
+        select: {
+          items: {
+            include: {
+              product: true,
+            }
+          }
+        },
         cacheStrategy: { ttl: 60 },
       });
 
@@ -49,20 +39,31 @@ const app = new Hono()
 )
 .post(
   "/",
-  zValidator("json", CartSchema.pick({
-    id: true,
+  zValidator("json", z.object({
+    cartId: z.string().cuid(),
+    productId: z.string().cuid(),
+    quantity: z.number().int().positive()
   })),
   async (c) => {
-    const values = c.req.valid("json")
-    const data = await db.cart.create({
-      data: {
-        id: values.id
-      }
-    })
-    return c.json({ data })
+    const { cartId, productId, quantity } = c.req.valid("json");
+
+    try {
+      const cartItem = await db.cartItem.create({
+        data: {
+          cartId,
+          productId,
+          quantity
+        },
+        include: {
+          product: true
+        }
+      });
+
+      return c.json({ data: cartItem });
+    } catch (error) {
+      return c.json({ error: "Failed to add item to cart" }, 500);
+    }
   }
-);
+)
 
 export default app;
-
-//TODO ADD Validation Middleware

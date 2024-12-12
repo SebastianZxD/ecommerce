@@ -4,77 +4,75 @@ import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import db from "@/lib/prisma";
 import { createId } from "@paralleldrive/cuid2";
-import { createTemporaryUserSchema } from "@/db/schema";
-import { useCreateCart } from "@/features/cart/api/use-create-cart";
+import { userSchema } from "@/db/schema";
 
 const app = new Hono()
 
 .get(
   "/",
   async (c) => {
-    const auth = getAuth(c); // Implement this function to get the current user from the request
+    //const auth = getAuth(c); Implement this function to get the current user from the request
 
-    if (!auth?.userId) {
-      return c.json({ error: "Unauthorized" }, 401);
-    }
+  //   if (!auth?.userId) {
+  //     return c.json({ error: "Unauthorized" }, 401);
+  //   }
 
-    const user = await db.user.findUnique({
-      where: { id: auth.userId },
-    });
+  //   const user = await db.user.findUnique({
+  //     where: { id: userId },
+  //   });
 
-    if (!user) {
-      return c.json({ error: "User not found" }, 404);
-    }
+  //   if (!user) {
+  //     return c.json({ error: "User not found" }, 404);
+  //   }
 
-    return c.json({ user });
-  }
-);
+  //   return c.json({ user });
+   }
+)
 
 // Get a user by ID
-.get(
-  "/:id",
-  zValidator("param", z.object({
-    id: z.string(),
-  })),
-  async (c) => {
-    const { id } = c.req.valid("param");
+// .get(
+//   "/:id",
+//   zValidator("param", z.object({
+//     id: z.string(),
+//   })),
+//   async (c) => {
+//     const { id } = c.req.valid("param");
 
-    const user = await db.user.findUnique({
-      where: { id },
-    });
+//     const user = await db.user.findUnique({
+//       where: { id },
+//     });
 
-    if (!user) {
-      return c.json({ error: "User not found" }, 404);
-    }
+//     if (!user) {
+//       return c.json({ error: "User not found" }, 404);
+//     }
 
-    return c.json({ user });
-  }
-)
+//     return c.json({ user });
+//   }
+// )
 
 
 
 // Create a new user
-.post(
-  "/",
-  zValidator("json", createTemporaryUserSchema.omit({
-    id: true,
-  })),
-  async (c) => {
-    const values = c.req.valid("json");
+// .post(
+//   "/",
+//   zValidator("json", userSchema.omit({
+//     id: true,
+//   })),
+//   async (c) => {
+//     const values = c.req.valid("json");
 
-    const user = await db.user.create({
-      data: {
-        id: createId(),
-        ...values,
-      },
-    });
+//     const user = await db.user.create({
+//       data: {
+//         id: createId(),
+//         ...values,
+//       },
+//     });
 
-    // Initialize a cart for the new user using the createCart function
-    const cart = await useCreateCart(user.userId);
+//     // Initialize a cart for the new user using the createCart function
 
-    return c.json({ user, cart });
-  }
-)
+//     return c.json({ user });
+//   }
+// )
 
 // Update user attributes
 .patch(

@@ -1,108 +1,100 @@
-import { z } from "zod";
-import { useState } from 'react';
-
+import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 
 import ProductThumbnail from '@/components/ProductThumbnail'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet'
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useToast } from '@/hooks/use-toast';
-import { MinusIcon, PlusIcon, ShoppingCart, ArrowRight } from "lucide-react";
-import { cn } from "@/lib/utils";
+
+import { ArrowRight } from "lucide-react";
 import { ProductThumbnailSkeleton } from "@/components/ProductThumnailSkeleton";
-import { useCreateCart } from "@/features/cart/api/use-create-cart";
+import AddToCart from "@/components/cart/AddToCart";
+import { Skeleton } from '@/components/ui/skeleton';
+import { CartItemSchema, CartSchema } from '@/prisma/generated/zod';
+import { useCartStore } from '@/features/cart/hooks/use-cart-store';
+import { useGetCart } from '@/features/cart/api/use-get-cart';
+import useStore from '@/features/cart-items/hooks/useStore';
 
+const cartFormSchema = CartSchema.pick({
+  id: true,
+});
 
-const quantitySchema = z.number()
-  .min(1, "Quantity must be at least 1")
-  .max(99, "Quantity cannot exceed 99")
-  .int("Quantity must be a whole number");
+const cartItemFormSchema = CartItemSchema.pick({
+  cartId: true,
+})
 
-type Props = {
-  product: {
-    id: string;
-    name: string;
-    description: string | null;
-    price: number;
-    imageURL: string | null;
-    createdAt: string;
-    isNew?: boolean;
-  } | null | undefined
-  open: boolean
-  onOpenChange: () => void
+type CartFormValues = z.input<typeof cartFormSchema>
+
+type CartItemFormValues = z.input<typeof cartItemFormSchema>
+
+interface Props {
+  product: ProductProps
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   isLoading: boolean;
 }
 
-type Product = {
-  quantity: number;
+interface ProductProps {
   id: string;
   name: string;
   description: string | null;
   price: number;
   imageURL: string | null;
   createdAt: string;
-  isNew?: boolean;
-}
+} 
 
-const ProductSheet = ({product, open, onOpenChange, isLoading} :Props)  => {
-
-  const [quantity, setQuantity] = useState<number>(1);
-  const [error, setError] = useState<string | null>(null);
-  const { toast } = useToast();
+const ProductSheet = ({
+  product, 
+  open, 
+  onOpenChange, 
+  isLoading 
+}: Props) => {
   const router = useRouter();
+  
+  const cartId = useStore(useCartStore, (state) => state.cartId)
+  const cartQuery = useGetCart(cartId);
+  const { data } = cartQuery;
 
-  const handleAddToCart = () => {
-    if (quantity <= 0 || !product) return;
+  const onSubmit = (values: CartItemFormValues) => {
+    if (!data?.id) {
 
-    const payload = {
-      ...product,
-      quantity,
-    };
-
-    const mutation = useCreateCart();
-    const onSubmit = (product: Payload) => {
-      const { data }
-      mutation.mutate(payload, {
-        onSuccess: () => {
-          
-        }
-      });
     }
-    console.log('Adding to cart:', payload);
-
-    toast({
-      title: "Product added to cart!",
-      description: `${quantity} x ${product.name} added to your cart`,
-      duration: 3000,
-    });
-
-    onOpenChange();
-  };
-
-  const validateAndSetQuantity = (value: string) => {
-    try {
-      // Remove leading zeros and convert to number
-      const cleanValue = value.replace(/^0+/, '');
-      const numValue = cleanValue === '' ? 1 : parseInt(cleanValue);
-      
-      // Validate with Zod
-      const validatedQuantity = quantitySchema.parse(numValue);
-      setQuantity(validatedQuantity);
-      setError(null);
-    } catch (err) {
-      if (err instanceof z.ZodError) {
-        setError(err.errors[0].message);
-      }
-    }
-  };
+  }
 
   
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
+      {isLoading ?  (
       <SheetContent className="space-y-4">
         <div className='relative h-full'>
-          <SheetHeader>
+        <SheetHeader className='flex items-center'>
+            <SheetTitle>
+              Loading Product...
+            </SheetTitle>
+            <Skeleton className="h-6 w-[200px]" />
+            <SheetDescription>
+              ...
+            </SheetDescription>
+            <Skeleton className="h-4 w-[300px]" />
+          </SheetHeader>
+        <div className="flex flex-col space-y-4 items-center">
+          <Skeleton className="h-[400px] w-full rounded-lg" />
+          <Skeleton className="h-4 w-2/3" />
+          <Skeleton className="h-4 w-1/2" />
+        </div>
+        <div className="absolute bottom-0 flex justify-between w-full">
+          <div className='flex gap-2'>
+            <Skeleton className="h-10 w-[100px]" />
+            <Skeleton className="h-10 w-[100px]" />
+          </div>
+            <Skeleton className="h-10 w-[100px]" />
+          
+          </div>
+        </div>
+      </SheetContent>
+      ) : (
+      <SheetContent className="space-y-4">
+        <div className='relative h-full'>
+          <SheetHeader className='flex items-center'>
             <SheetTitle>
               {product?.name}
             </SheetTitle>
@@ -110,68 +102,30 @@ const ProductSheet = ({product, open, onOpenChange, isLoading} :Props)  => {
               {product?.description}
             </SheetDescription>
           </SheetHeader>
-          {isLoading ? (
-            <ProductThumbnailSkeleton />
-          ) : (
+          {product? (
             <ProductThumbnail 
-              name={product?.name} 
-              price={product?.price} 
-              discount={undefined} 
-              imageURL={product?.imageURL} 
-              isNew={product?.isNew}
+              name={product?.name}
+              price={product?.price}
               description={product?.description}
+              imageURL={product?.imageURL}
             />
+          ) : (
+            <ProductThumbnailSkeleton />
           )}
-          <div className="flex items-center space-x-4 absolute bottom-0 right-0">
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => setQuantity(Math.max(0, quantity - 1))}
-              >
-                <MinusIcon className="h-4 w-4" />
-              </Button>
-              <Input
-                type="number"
-                min="1"
-                max="99"
-                value={quantity}
-                onChange={(e) => validateAndSetQuantity(e.target.value)}
-                className={cn(
-                  "w-20 text-center mx-2",
-                )}
-              />
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => setQuantity(quantity + 1)}
-              >
-                <PlusIcon className="h-4 w-4" />
-              </Button>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button
-                onClick={handleAddToCart}
-                disabled={quantity <= 0}
-                variant="default"
-                className="flex-1"
-              >
-                <ShoppingCart className="mr-2 h-4 w-4" />
-                Add to Cart
-              </Button>
+          <div className="absolute bottom-0 flex justify-between w-full">
+              <AddToCart productData={product} onSubmit={onSubmit}/>
               <Button
                 onClick={() => router.push('/checkout')}
                 variant='default'
-                className="flex items-center gap-2 
-                  bg-violet-600"
+                className="flex items-center gap-2 bg-violet-600"
               >
                 Checkout
                 <ArrowRight className="h-4 w-4" />
               </Button>
-            </div>
           </div>
         </div>
       </SheetContent>
+      )}
     </Sheet>
   )
 }

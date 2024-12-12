@@ -12,10 +12,12 @@
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.4",
     "@hono/zod-validator": "^0.4.1",
+    "@hookform/resolvers": "^3.9.1",
     "@paralleldrive/cuid2": "^1.0.2",
     "@prisma/client": "^6.0.1",
     "@prisma/extension-accelerate": "^1.2.1",
     "@radix-ui/react-dialog": "^1.1.2",
+    "@radix-ui/react-label": "^2.1.0",
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-toast": "^1.2.2",
     "@tanstack/react-query": "^5.62.2",
@@ -28,11 +30,14 @@
     "pnpm": "^9.14.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-hook-form": "^7.54.0",
     "react-use": "^17.5.1",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
+    "typescript-cookie": "^1.0.6",
     "vaul": "^1.1.1",
-    "zod": "^3.23.8",
+    "zod": "^3.24.1",
+    "zod-prisma-types": "^3.2.1",
     "zustand": "^5.0.2"
   },
   "devDependencies": {
