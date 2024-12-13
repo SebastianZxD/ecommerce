@@ -19,7 +19,7 @@ const cartFormSchema = CartSchema.pick({
 });
 
 const cartItemFormSchema = CartItemSchema.pick({
-  cartId: true,
+  quantity: true,
 })
 
 type CartFormValues = z.input<typeof cartFormSchema>
@@ -54,10 +54,8 @@ const ProductSheet = ({
   const cartQuery = useGetCart(cartId);
   const { data } = cartQuery;
 
-  const onSubmit = (values: CartItemFormValues) => {
-    if (!data?.id) {
-
-    }
+  const onSubmit = (value: CartItemFormValues) => {
+    console.log(value);
   }
 
   
