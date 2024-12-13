@@ -1,4 +1,4 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+This project is in early development and a test for an specific tech stack selected in order to achieve scalability and develop a database agnostic ecommerce template.
 
 ## Getting Started
 
