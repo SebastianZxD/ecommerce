@@ -1,10 +1,6 @@
-import { useState } from "react";
-
-
 import { cn } from "@/lib/utils"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { z } from "zod";
 import { MinusIcon, PlusIcon } from "lucide-react";
 
 
@@ -29,14 +25,6 @@ export const AmmountInput = ({
     if (value === 1) return;
     onChange(value - 1);
   }
-
-  
-  const quantitySchema = z.number()
-  .min(1, "Quantity must be at least 1")
-  .max(99, "Quantity cannot exceed 99")
-  .int("Quantity must be a whole number");
-  
-
 
   return (
     <div className="flex flex-row">
