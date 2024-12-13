@@ -10,31 +10,24 @@ import { MinusIcon, PlusIcon } from "lucide-react";
 
 type Props = {
   value: number
-  quantity: number
-  setQuantity: (quantity: number) => void;
+  onChange: (value: number) => void;
   isDisabled: boolean; 
 }
 
 
 export const AmmountInput = ({
   value,
-  quantity,
-  setQuantity,
+  onChange,
   isDisabled,
 }: Props) => {
 
-  const {...field} = {
-    value: quantity
-  }
-
-
   const increaseQuantity = () => {
-    setQuantity(quantity + 1);
+    onChange(value + 1);
   }
 
   const decreaseQuantity = () => {
-    if (quantity === 1) return
-    setQuantity(quantity - 1);
+    if (value === 1) return;
+    onChange(value - 1);
   }
 
   
@@ -43,7 +36,6 @@ export const AmmountInput = ({
   .max(99, "Quantity cannot exceed 99")
   .int("Quantity must be a whole number");
   
-  console.log(value)
 
 
   return (
@@ -52,18 +44,19 @@ export const AmmountInput = ({
           variant="outline"
           size="icon"
           onClick={decreaseQuantity}
-          disabled={isDisabled}
+          disabled={isDisabled || value === 1}
+          type="button"
           >
         <MinusIcon className="h-4 w-4" />
         </Button>
         <Input
           type="number"
-          value={quantity}
           min={1}
           max={99}
           className={cn(
             "w-20 text-center mx-2",
           )}
+          value={value}
           readOnly
         />
         <Button
@@ -71,6 +64,7 @@ export const AmmountInput = ({
           size="icon"
           onClick={increaseQuantity}
           disabled={isDisabled}
+          type="button"
           >
           <PlusIcon className="h-4 w-4" />
         </Button>

@@ -54,7 +54,11 @@ const AddToCartForm = ({
 }: Props) => {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      quantity: 1,
+    },
   })
+
   const [quantity, setQuantity] = useState<number>(1);
   const product = productData;
   const { onClose } = useOpenProduct();
@@ -70,7 +74,7 @@ const AddToCartForm = ({
   
 
   const handleSubmit = (values: FormValues) => {
-    
+    console.log(values)
     onSubmit(values);
   }
 
@@ -86,13 +90,16 @@ const AddToCartForm = ({
                   render={({ field }) => (
                     <FormItem>
                     <FormControl>
-                      <AmmountInput {...field} quantity={quantity} setQuantity={setQuantity} isDisabled={isDisabled}/>
+                      <AmmountInput 
+                        value={field.value} 
+                        onChange={field.onChange} isDisabled={isDisabled}  
+                      />
                     </FormControl>
                   </FormItem>
               )}
               />
               <Button
-                disabled={quantity <= 0 || isDisabled}
+                disabled={form.watch("quantity") <= 0 || isDisabled}
                 variant="default"
                 className="flex-1"
                 type='submit'
